@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akai Mujahidin — UI/UX Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #18181f;
+    --accent: #ffffff;
+    --accent2: #ffffff;
+    --accent3: #cccccc;
+    --text: #ffffff;
+    --muted: #888899;
+    --border: rgba(255,255,255,0.12);
+    --card: rgba(255,255,255,0.03);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* GLOW ORBS */
+  .orb1 {
+    position: fixed;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    top: -200px; left: -100px;
+    pointer-events: none; z-index: 0;
+    animation: floatOrb 8s ease-in-out infinite alternate;
+  }
+  .orb2 {
+    position: fixed;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+    bottom: -100px; right: -50px;
+    pointer-events: none; z-index: 0;
+    animation: floatOrb 10s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes floatOrb {
+    from { transform: translate(0,0); }
+    to { transform: translate(30px, 40px); }
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 3rem;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800; font-size: 1.2rem;
+    color: var(--accent2);
+    letter-spacing: -0.02em;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.85rem; font-weight: 500;
+    color: var(--muted); text-decoration: none;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* HERO */
+  .hero {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 0 3rem;
+    padding-top: 80px;
+  }
+  .hero-content { max-width: 1200px; margin: 0 auto; width: 100%; }
+  .hero-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center;
+  }
+
+  /* HERO TEXT */
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.75rem; font-weight: 500;
+    color: var(--accent2); letter-spacing: 0.1em; text-transform: uppercase;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 100px;
+    margin-bottom: 1.5rem;
+    white-space: nowrap;
+  }
+  .hero-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: blink 1.5s ease-in-out infinite; flex-shrink: 0; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title .line2 { color: var(--accent2); }
+
+  .hero-desc {
+    font-size: 1rem; color: var(--muted); line-height: 1.8;
+    max-width: 440px; margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #ffffff; color: #0a0a0f;
+    padding: 0.9rem 1.8rem; border-radius: 100px;
+    font-size: 0.9rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s;
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover { background: #dddddd; color: #0a0a0f; transform: translateY(-2px); }
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: #ffffff;
+    padding: 0.9rem 1.8rem; border-radius: 100px;
+    font-size: 0.9rem; font-weight: 500;
+    text-decoration: none; transition: all 0.2s;
+    border: 1px solid rgba(255,255,255,0.4);
+  }
+  .btn-outline:hover { border-color: #ffffff; color: #ffffff; background: rgba(255,255,255,0.08); }
+
+  /* HERO VISUAL */
+  .hero-visual { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+  .avatar-wrap {
+    position: relative;
+    width: 280px; height: 280px;
+  }
+  .avatar-wrap.empty {
+    display: none;
+  }
+  .avatar-ring {
+    position: absolute; inset: -12px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    animation: spinSlow 20s linear infinite;
+  }
+  .avatar-ring::before {
+    content: '';
+    position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+  }
+  @keyframes spinSlow { to { transform: rotate(360deg); } }
+  .avatar-img {
+    width: 280px; height: 280px; border-radius: 50%;
+    object-fit: cover; object-position: center;
+    border: 3px solid var(--bg3);
+    filter: grayscale(20%);
+    display: block;
+  }
+  .hero-visual.no-photo {
+    display: none;
+  }
+  /* Jika tidak ada foto, hero pakai 1 kolom penuh */
+  .hero-inner.no-photo {
+    grid-template-columns: 1fr;
+  }
+  /* STATS */
+  .hero-stats {
+    display: flex; gap: 1.5rem;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem 1.4rem;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 800;
+    color: var(--accent2);
+  }
+  .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+  /* SECTION */
+  section {
+    position: relative; z-index: 1;
+    padding: 5rem 3rem;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .section-tag {
+    font-size: 0.72rem; font-weight: 500;
+    color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 800; letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .section-desc { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 500px; font-weight: 300; }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem; margin-top: 3rem;
+  }
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .skill-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+  .skill-icon {
+    font-size: 1.6rem; margin-bottom: 1rem;
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .skill-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem; font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .skill-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+  /* PORTFOLIO */
+  .portfolio-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem;
+  }
+  .portfolio-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px; overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .project-card:hover { border-color: var(--accent); transform: translateY(-6px); }
+  .project-img {
+    width: 100%; aspect-ratio: 16/9;
+    object-fit: cover; display: block;
+    background: var(--bg3);
+  }
+  .project-img-placeholder {
+    width: 100%; aspect-ratio: 16/9;
+    background: linear-gradient(135deg, var(--bg3) 0%, #1e1e28 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; color: var(--muted); font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .project-img-placeholder:hover { background: var(--bg2); }
+  .project-img-placeholder svg { opacity: 0.3; }
+  .project-body { padding: 1.4rem; }
+  .project-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  .project-tag {
+    font-size: 0.68rem; font-weight: 500;
+    color: var(--accent2); letter-spacing: 0.06em; text-transform: uppercase;
+    background: rgba(255,255,255,0.06); padding: 3px 10px; border-radius: 100px;
+  }
+  .project-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 0.5rem; line-height: 1.3;
+  }
+  .project-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+  .project-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.8rem; color: var(--accent2); margin-top: 1rem;
+    text-decoration: none; font-weight: 500;
+    transition: gap 0.2s;
+  }
+  .project-link:hover { gap: 10px; }
+  .project-img { cursor: zoom-in; }
+
+  /* LIGHTBOX */
+  #lightbox {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(10px);
+    align-items: center; justify-content: center;
+    cursor: zoom-out;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img {
+    max-width: 90vw; max-height: 90vh;
+    object-fit: contain; border-radius: 12px;
+    box-shadow: 0 0 60px rgba(0,0,0,0.8);
+    animation: zoomIn 0.2s ease;
+  }
+  @keyframes zoomIn { from { opacity:0; transform:scale(0.92); } to { opacity:1; transform:scale(1); } }
+  #lightbox-close {
+    position: fixed; top: 1.2rem; right: 1.5rem;
+    color: white; font-size: 2rem; cursor: pointer;
+    opacity: 0.7; transition: opacity 0.2s; line-height: 1;
+    background: none; border: none;
+  }
+  #lightbox-close:hover { opacity: 1; }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1.2fr;
+    gap: 5rem; align-items: center; margin-top: 3rem;
+  }
+  .about-info { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+  .about-info li {
+    display: flex; gap: 1rem;
+    padding: 1rem 1.2rem;
+    background: var(--card);
+    border: 1px solid var(--border); border-radius: 12px;
+    align-items: center;
+  }
+  .about-info .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .about-info .value { font-size: 0.9rem; font-weight: 500; }
+  .about-icon { font-size: 1.2rem; opacity: 0.7; }
+  .about-text p { color: var(--muted); line-height: 1.8; margin-bottom: 1.2rem; font-weight: 300; }
+  .about-text p strong { color: var(--text); font-weight: 500; }
+
+  /* CONTACT */
+  .contact-wrap {
+    margin-top: 3rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 3rem;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 3rem; align-items: center;
+  }
+  .contact-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 800;
+    margin-bottom: 1rem;
+  }
+  .contact-sub { color: var(--muted); font-size: 0.9rem; line-height: 1.7; font-weight: 300; }
+  .social-links { display: flex; flex-direction: column; gap: 0.8rem; }
+  .social-link {
+    display: flex; align-items: center; gap: 12px;
+    padding: 1rem 1.2rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border); border-radius: 12px;
+    text-decoration: none; color: var(--text);
+    font-size: 0.88rem; font-weight: 500;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .social-link:hover { border-color: var(--accent); background: rgba(255,255,255,0.03); }
+  .social-icon { font-size: 1rem; opacity: 0.7; }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 2rem 3rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 0.78rem;
+  }
+
+  /* EDIT HINT */
+  .edit-hint {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    border-radius: 12px; padding: 0.7rem 1.1rem;
+    font-size: 0.72rem; color: var(--accent2);
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .edit-hint:hover { background: rgba(255,255,255,0.15); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75); z-index: 300;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 2rem; width: 560px; max-width: 90vw;
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal h3 {
+    font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700;
+    margin-bottom: 1.5rem; color: var(--accent2);
+  }
+  .modal-close {
+    float: right; background: none; border: none;
+    color: var(--muted); font-size: 1.2rem; cursor: pointer;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--text); }
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%; padding: 0.75rem 1rem;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text);
+    font-family: inherit; font-size: 0.88rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .modal-actions { display: flex; gap: 0.8rem; justify-content: flex-end; margin-top: 1.5rem; }
+  .btn-sm {
+    padding: 0.6rem 1.2rem; border-radius: 100px;
+    font-size: 0.83rem; font-weight: 500; cursor: pointer;
+    border: 1px solid var(--border); background: transparent; color: var(--text);
+    transition: all 0.2s;
+  }
+  .btn-sm.primary { background: var(--accent); border-color: var(--accent); color: white; }
+  .btn-sm:hover { border-color: var(--accent); }
+  .btn-sm.primary:hover { background: var(--accent2); }
+
+  .project-add-card {
+    background: var(--card); border: 1px dashed var(--border);
+    border-radius: 20px; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 10px; min-height: 240px; cursor: pointer;
+    color: var(--muted); font-size: 0.85rem; transition: border-color 0.2s;
+  }
+  .project-add-card:hover { border-color: var(--accent); color: var(--accent2); }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 0 1.5rem; }
+    .hero-inner { grid-template-columns: 1fr; text-align: center; }
+    .hero-visual { order: -1; }
+    .avatar-wrap, .avatar-img, .avatar-placeholder { width: 200px; height: 200px; }
+    section { padding: 3rem 1.5rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .contact-wrap { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb1"></div>
+<div class="orb2"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" id="nav-name">AM.</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-tag">
+          <span class="dot"></span>
+          <span id="hero-status">Tersedia untuk kolaborasi</span>
+        </div>
+        <h1 class="hero-title">
+          <span id="hero-name">Akai<br>Mujahidin</span><br>
+          <span class="line2" id="hero-role">UI/UX Designer</span>
+        </h1>
+        <p class="hero-desc" id="hero-desc">
+          Menciptakan pengalaman digital yang intuitif dan estetis. Seorang desainer muda dari Riau yang sedang mengasah keahlian di PeTIK II Jombang, jurusan Digital Marketing.
+        </p>
+        <div class="hero-btns">
+          <a href="#portfolio" class="btn-primary">Lihat Karya ↓</a>
+          <a href="https://wa.me/6281376961658" target="_blank" class="btn-outline">Hubungi Saya</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="avatar-wrap" id="avatar-wrap">
+          <div class="avatar-ring"></div>
+          <img class="avatar-img" id="avatar-img" src="GANTI_URL_FOTO_DI_SINI" alt="Akai Mujahidin" style="display:block;">
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <div class="stat-num" id="stat-projects">12+</div>
+            <div class="stat-label">Proyek</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-exp">2+</div>
+            <div class="stat-label">Tahun Belajar</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-tools">8+</div>
+            <div class="stat-label">Tools</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-tag">Keahlian</div>
+  <h2 class="section-title">Apa yang Saya Kuasai</h2>
+  <p class="section-desc">Kombinasi skill desain dan digital marketing untuk menciptakan produk yang tidak hanya indah tapi juga efektif.</p>
+  <div class="skills-grid" id="skills-grid">
+    <div class="skill-card">
+      <div class="skill-icon">🎨</div>
+      <div class="skill-name">UI Design</div>
+      <div class="skill-desc">Merancang antarmuka yang bersih, modern, dan konsisten menggunakan prinsip desain terkini.</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🔬</div>
+      <div class="skill-name">UX Research</div>
+      <div class="skill-desc">Memahami kebutuhan pengguna melalui riset, wawancara, dan analisis perilaku.</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">⚡</div>
+      <div class="skill-name">Figma & Prototyping</div>
+      <div class="skill-desc">Membuat prototipe interaktif dan design system yang rapi di Figma.</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">📱</div>
+      <div class="skill-name">Mobile Design</div>
+      <div class="skill-desc">Desain responsif untuk aplikasi iOS dan Android mengikuti guideline platform.</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">📊</div>
+      <div class="skill-name">Digital Marketing</div>
+      <div class="skill-desc">Strategi konten, SEO dasar, dan analisis performa kampanye digital.</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🎯</div>
+      <div class="skill-name">Brand Identity</div>
+      <div class="skill-desc">Membangun identitas visual yang kuat dan konsisten untuk brand modern.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="portfolio-header">
+    <div>
+      <div class="section-tag">Portofolio</div>
+      <h2 class="section-title">Karya Terbaik Saya</h2>
+    </div>
+  </div>
+  <div class="portfolio-grid" id="portfolio-grid">
+
+    <!-- ===== CARD 1 — Ganti src, judul, deskripsi, tags, dan link ===== -->
+    <div class="project-card">
+      <img class="project-img" src="GANTI_URL_FOTO_PROYEK_1" alt="Proyek 1" onclick="openLightbox(this.src, this.alt)">
+      <div class="project-body">
+        <div class="project-tags">
+          <span class="project-tag">UI Design</span>
+          <span class="project-tag">Mobile App</span>
+          <span class="project-tag">Figma</span>
+        </div>
+        <div class="project-title">Redesign App Marketplace Lokal</div>
+        <div class="project-desc">Proyek redesign aplikasi marketplace UMKM lokal dengan fokus pada kemudahan penggunaan dan estetika modern.</div>
+        <a href="#" class="project-link" target="_blank">Lihat Proyek →</a>
+      </div>
+    </div>
+
+    <!-- ===== CARD 2 — Ganti src, judul, deskripsi, tags, dan link ===== -->
+    <div class="project-card">
+      <img class="project-img" src="GANTI_URL_FOTO_PROYEK_2" alt="Proyek 2" onclick="openLightbox(this.src, this.alt)">
+      <div class="project-body">
+        <div class="project-tags">
+          <span class="project-tag">Dashboard</span>
+          <span class="project-tag">Data Viz</span>
+          <span class="project-tag">Web Design</span>
+        </div>
+        <div class="project-title">Dashboard Analytics Digital Marketing</div>
+        <div class="project-desc">Desain dashboard untuk memantau performa kampanye digital marketing secara real-time.</div>
+        <a href="#" class="project-link" target="_blank">Lihat Proyek →</a>
+      </div>
+    </div>
+
+    <!-- ===== CARD 3 — Ganti src, judul, deskripsi, tags, dan link ===== -->
+    <div class="project-card">
+      <img class="project-img" src="GANTI_URL_FOTO_PROYEK_3" alt="Proyek 3" onclick="openLightbox(this.src, this.alt)">
+      <div class="project-body">
+        <div class="project-tags">
+          <span class="project-tag">Branding</span>
+          <span class="project-tag">Logo Design</span>
+          <span class="project-tag">Identity</span>
+        </div>
+        <div class="project-title">Brand Identity Startup Kuliner</div>
+        <div class="project-desc">Membangun identitas visual lengkap untuk startup kuliner muda, termasuk logo, warna, dan panduan brand.</div>
+        <a href="#" class="project-link" target="_blank">Lihat Proyek →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-tag">Tentang Saya</div>
+  <h2 class="section-title">Halo, Saya Akai 👋</h2>
+  <div class="about-grid">
+    <ul class="about-info" id="about-info">
+      <li>
+        <span class="about-icon">📍</span>
+        <div><div class="label">Asal</div><div class="value" id="info-origin">Riau, Indonesia</div></div>
+      </li>
+      <li>
+        <span class="about-icon">🏫</span>
+        <div><div class="label">Sekolah</div><div class="value" id="info-school">PeTIK II Jombang</div></div>
+      </li>
+      <li>
+        <span class="about-icon">📚</span>
+        <div><div class="label">Jurusan</div><div class="value" id="info-major">Digital Marketing (DM)</div></div>
+      </li>
+      <li>
+        <span class="about-icon">💼</span>
+        <div><div class="label">Fokus</div><div class="value" id="info-focus">UI/UX Design</div></div>
+      </li>
+      <li>
+        <span class="about-icon">🌟</span>
+        <div><div class="label">Status</div><div class="value" id="info-status">Open for Collaboration</div></div>
+      </li>
+    </ul>
+    <div class="about-text">
+      <p id="about-p1">Saya adalah <strong>Akai Mujahidin</strong>, seorang UI/UX Designer muda yang berasal dari Riau dan kini sedang menempuh pendidikan di <strong>PeTIK II Jombang</strong>, jurusan Digital Marketing.</p>
+      <p id="about-p2">Passion saya ada di persimpangan antara <strong>estetika dan fungsi</strong> — menciptakan desain yang bukan hanya indah dipandang, tapi juga menyenangkan dan mudah digunakan oleh pengguna.</p>
+      <p id="about-p3">Saya percaya bahwa desain yang baik bisa mengubah cara orang berinteraksi dengan teknologi, dan itulah yang mendorong saya untuk terus belajar dan berkembang setiap harinya.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-tag">Kontak</div>
+  <h2 class="section-title">Mari Berkolaborasi</h2>
+  <div class="contact-wrap">
+    <div>
+      <p class="contact-title">Ada project yang menarik?</p>
+      <p class="contact-sub" id="contact-sub">Saya selalu terbuka untuk diskusi proyek baru, ide kreatif, atau kesempatan untuk berkolaborasi. Jangan ragu untuk menghubungi saya!</p>
+    </div>
+    <div class="social-links" id="social-links">
+      <a href="#" class="social-link" id="link-email">
+        <span class="social-icon">✉️</span>
+        <div><div style="font-size:0.7rem;color:var(--muted);margin-bottom:2px;">Email</div>akaimujahidin@email.com</div>
+        <span style="margin-left:auto;opacity:0.4">→</span>
+      </a>
+      <a href="#" class="social-link" id="link-instagram">
+        <span class="social-icon">📷</span>
+        <div><div style="font-size:0.7rem;color:var(--muted);margin-bottom:2px;">Instagram</div>@akaimujahidin</div>
+        <span style="margin-left:auto;opacity:0.4">→</span>
+      </a>
+      <a href="#" class="social-link" id="link-behance">
+        <span class="social-icon">🎨</span>
+        <div><div style="font-size:0.7rem;color:var(--muted);margin-bottom:2px;">Behance</div>behance.net/akaimujahidin</div>
+        <span style="margin-left:auto;opacity:0.4">→</span>
+      </a>
+      <a href="#" class="social-link" id="link-linkedin">
+        <span class="social-icon">💼</span>
+        <div><div style="font-size:0.7rem;color:var(--muted);margin-bottom:2px;">LinkedIn</div>Akai Mujahidin</div>
+        <span style="margin-left:auto;opacity:0.4">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 <span id="footer-name">Akai Mujahidin</span>.All rights reserved.</p>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+// =====================
+// LIGHTBOX
+// =====================
+function openLightbox(src, alt) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-img').alt = alt;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// =====================
+// URL PARAMS
+// =====================
+function getParams() {
+  return new URLSearchParams(window.location.search);
+}
+
+function applyParams() {
+  const p = getParams();
+  // Name
+  const name = p.get('name') || 'Akai Mujahidin';
+  const role = p.get('role') || 'UI/UX Designer';
+  const desc = p.get('desc') || 'Menciptakan pengalaman digital yang intuitif dan estetis. Seorang desainer muda dari Riau yang sedang mengasah keahlian di PeTIK II Jombang, jurusan Digital Marketing.';
+  const origin = p.get('origin') || 'Riau, Indonesia';
+  const school = p.get('school') || 'PeTIK II Jombang';
+  const major = p.get('major') || 'Digital Marketing (DM)';
+  const email = p.get('email') || 'akaimujahidin@email.com';
+  const instagram = p.get('instagram') || 'akaimujahidin';
+  const about1 = p.get('about1') || `Saya adalah <strong>${name}</strong>, seorang UI/UX Designer muda yang berasal dari ${origin} dan kini sedang menempuh pendidikan di <strong>${school}</strong>, jurusan ${major}.`;
+  const about2 = p.get('about2') || 'Passion saya ada di persimpangan antara <strong>estetika dan fungsi</strong> — menciptakan desain yang bukan hanya indah dipandang, tapi juga menyenangkan dan mudah digunakan oleh pengguna.';
+
+  // Apply to DOM
+  document.getElementById('nav-name').textContent = name.split(' ')[0][0] + (name.split(' ')[1] ? name.split(' ')[1][0] : '') + '.';
+  document.getElementById('hero-name').innerHTML = name.split(' ').join('<br>');
+  document.getElementById('hero-role').textContent = role;
+  document.getElementById('hero-desc').textContent = desc;
+  document.getElementById('info-origin').textContent = origin;
+  document.getElementById('info-school').textContent = school;
+  document.getElementById('info-major').textContent = major;
+  document.getElementById('about-p1').innerHTML = about1;
+  document.getElementById('about-p2').innerHTML = about2;
+  document.getElementById('footer-name').textContent = name;
+  document.getElementById('link-email').children[1].children[1].textContent = email;
+  document.getElementById('link-instagram').children[1].children[1].textContent = '@' + instagram;
+
+  // Photo ditampilkan langsung via src di HTML — tidak perlu JS
+}
+
+// =====================
+// MODALS
+// =====================
+function openEditModal() {
+  const p = getParams();
+  document.getElementById('edit-name').value = p.get('name') || 'Akai Mujahidin';
+  document.getElementById('edit-role').value = p.get('role') || 'UI/UX Designer';
+  document.getElementById('edit-desc').value = p.get('desc') || document.getElementById('hero-desc').textContent;
+  document.getElementById('edit-origin').value = p.get('origin') || 'Riau, Indonesia';
+  document.getElementById('edit-school').value = p.get('school') || 'PeTIK II Jombang';
+  document.getElementById('edit-major').value = p.get('major') || 'Digital Marketing (DM)';
+  document.getElementById('edit-about1').value = p.get('about1') || '';
+  document.getElementById('edit-about2').value = p.get('about2') || '';
+  document.getElementById('edit-email').value = p.get('email') || 'akaimujahidin@email.com';
+  document.getElementById('edit-instagram').value = p.get('instagram') || 'akaimujahidin';
+  document.getElementById('edit-photo').value = p.get('photo') || '';
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function openPhotoModal() {
+  document.getElementById('photo-url-input').value = getParams().get('photo') || '';
+  document.getElementById('photo-modal').classList.add('open');
+}
+
+function openAddProjectModal() {
+  document.getElementById('proj-title').value = '';
+  document.getElementById('proj-desc').value = '';
+  document.getElementById('proj-img').value = '';
+  document.getElementById('proj-link').value = '';
+  document.getElementById('proj-tags').value = '';
+  document.getElementById('add-project-modal').classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// =====================
+// ACTIONS
+// =====================
+function applyPhoto() {
+  const url = document.getElementById('photo-url-input').value.trim();
+  if (url) {
+    updateURL({ photo: url });
+    applyParams();
+  }
+  closeModal('photo-modal');
+}
+
+function saveEditAndUpdateURL() {
+  const data = {
+    name: document.getElementById('edit-name').value,
+    role: document.getElementById('edit-role').value,
+    desc: document.getElementById('edit-desc').value,
+    origin: document.getElementById('edit-origin').value,
+    school: document.getElementById('edit-school').value,
+    major: document.getElementById('edit-major').value,
+    about1: document.getElementById('edit-about1').value,
+    about2: document.getElementById('edit-about2').value,
+    email: document.getElementById('edit-email').value,
+    instagram: document.getElementById('edit-instagram').value,
+    photo: document.getElementById('edit-photo').value,
+  };
+  updateURL(data);
+  applyParams();
+  closeModal('edit-modal');
+  // Copy URL to clipboard
+  navigator.clipboard.writeText(window.location.href).catch(()=>{});
+  showToast('✅ Disimpan! URL sudah di-copy ke clipboard');
+}
+
+function addProject() {
+  const title = document.getElementById('proj-title').value.trim();
+  if (!title) return;
+  const projects = getProjects();
+  projects.push({
+    id: 'p' + Date.now(),
+    title,
+    desc: document.getElementById('proj-desc').value,
+    img: document.getElementById('proj-img').value,
+    link: document.getElementById('proj-link').value,
+    tags: document.getElementById('proj-tags').value.split(',').map(t=>t.trim()).filter(Boolean)
+  });
+  saveProjects(projects);
+  renderProjects();
+  closeModal('add-project-modal');
+  showToast('✅ Proyek ditambahkan! URL diperbarui.');
+}
+
+function deleteProject(i) {
+  if (!confirm('Hapus proyek ini?')) return;
+  const projects = getProjects();
+  projects.splice(i, 1);
+  saveProjects(projects);
+  renderProjects();
+}
+
+let editingIdx = null;
+function editProjectImg(i) {
+  editingIdx = i;
+  const projects = getProjects();
+  const url = prompt('Masukkan URL gambar proyek:', projects[i].img || '');
+  if (url !== null) {
+    projects[i].img = url;
+    saveProjects(projects);
+    renderProjects();
+  }
+}
+
+function editProjectFull(i) {
+  const projects = getProjects();
+  const p = projects[i];
+  document.getElementById('proj-title').value = p.title;
+  document.getElementById('proj-desc').value = p.desc;
+  document.getElementById('proj-img').value = p.img || '';
+  document.getElementById('proj-link').value = p.link || '';
+  document.getElementById('proj-tags').value = (p.tags||[]).join(', ');
+  editingIdx = i;
+
+  // Hijack save button temporarily
+  const btn = document.querySelector('#add-project-modal .btn-sm.primary');
+  btn.textContent = 'Simpan Perubahan';
+  btn.onclick = function() {
+    const title = document.getElementById('proj-title').value.trim();
+    if (!title) return;
+    projects[i] = {
+      ...projects[i],
+      title,
+      desc: document.getElementById('proj-desc').value,
+      img: document.getElementById('proj-img').value,
+      link: document.getElementById('proj-link').value,
+      tags: document.getElementById('proj-tags').value.split(',').map(t=>t.trim()).filter(Boolean)
+    };
+    saveProjects(projects);
+    renderProjects();
+    closeModal('add-project-modal');
+    btn.textContent = 'Tambah Proyek';
+    btn.onclick = addProject;
+    showToast('✅ Proyek diperbarui!');
+  };
+  document.getElementById('add-project-modal').classList.add('open');
+}
+
+// =====================
+// TOAST
+// =====================
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = `position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:var(--accent);color:white;padding:0.7rem 1.5rem;border-radius:100px;font-size:0.83rem;z-index:400;animation:fadeInUp 0.3s ease;`;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+// =====================
+// CLOSE ON BACKDROP
+// =====================
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => {
+    if (e.target === el) el.classList.remove('open');
+  });
+});
+
+// =====================
+// INIT
+// =====================
+applyParams();
+
+// Add fade-in animation
+const style = document.createElement('style');
+style.textContent = `@keyframes fadeInUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
